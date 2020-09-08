@@ -137,8 +137,8 @@ void MachineHealth::on_pushButton_save_clicked()
     else
     {
         //send Machine State Not OK, have to make a revision
-        QMessageBox::StandardButton res = QMessageBox::information(this,"Machine state","State not verified",QMessageBox::Ignore,QMessageBox::Cancel);
-        if(res == QMessageBox::Cancel)
+        QMessageBox::StandardButton res = QMessageBox::information(this,"Machine state","State not verified",QMessageBox::Yes,QMessageBox::No);
+        if(res == QMessageBox::No)
             return;
     }
 
