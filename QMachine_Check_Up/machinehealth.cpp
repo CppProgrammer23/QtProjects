@@ -5,6 +5,8 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include <QDateTime>
+#include<QtSql/QSqlQuery>
+#include<QtSql>
 
 
 MachineHealth::MachineHealth(QWidget *parent)
