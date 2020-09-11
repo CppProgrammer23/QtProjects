@@ -6,6 +6,7 @@
 #include <chrono>
 #include <QDateTimeEdit>
 #include <QTimer>
+#include<QtSql/QSqlDatabase>
 
 
 QT_BEGIN_NAMESPACE
@@ -61,5 +62,6 @@ private:
     QTimer* updateTime=new QTimer;
 
     bool set12=true, set24=false;
+    QSqlDatabase db;
 };
 #endif // MACHINEHEALTH_H
