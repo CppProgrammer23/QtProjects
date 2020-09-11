@@ -13,27 +13,25 @@ MachineHealth::MachineHealth(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QTime ti;
 
-    myD = iD.currentDate();
-    myT = iT.currentTime();
-    if(myT.hour()>12)
-    {
-        Format=true;
-        t = myT.hour()-12;
-        ti.setHMS(t,myT.minute(),myT.second());
-        ui->comboBox_HFormat->setCurrentIndex(1);
-    }
-    else
-    {
-        ti.setHMS(myT.hour(),myT.minute(),myT.second());
-        ui->comboBox_HFormat->setCurrentIndex(0);
-    }
-    ui->dateEdit->setDate(myD);
-    ui->timeEdit->setTime(ti);
+    ui->timeEdit->setDisplayFormat("hh:mm A");
+
+    ui->timeEdit->setTime(QTime::currentTime());
+    ui->dateEdit->setDate(QDate::currentDate());
+
 
     connect(updateTime,&QTimer::timeout, this, &MachineHealth::update);
-    updateTime->start(1000);
+    updateTime->start(100);
+
+    db = QSqlDatabase::addDatabase("QSQLITE");  //this is the driver for SQL Lite
+    db.setPort(3306);
+    db.setHostName("sql2.freemysqlhosting.net");
+    db.setPassword("YourCode");
+    db.setUserName("YourDBName");
+    if(!db.open())
+        ui->label->setText("<font color='red'>Failed to connect to database.</font>");
+    else
+        ui->label->setText("<font color='green'>Connected to database and Opened.</font>");
 
 }
 
@@ -124,12 +122,20 @@ void MachineHealth::on_actionVersion_triggered()
 
 void MachineHealth::on_pushButton_save_clicked()
 {
-    QMessageBox mb;
+   if(!db.open())
+        db.open();
+    QSqlQuery qsr(db);
     QString Machine_ID = ui->lineEdit->text();
+    QString Operator_ID =ui->lineEdit_Operator_ID->text();
     if(Machine_ID=="")
     {
          QMessageBox::information(this,"Error","Please enter the Machine's ID",QMessageBox::Ok);
          return;
+    }
+    if(Operator_ID=="")
+    {
+        QMessageBox::information(this,"Error","Please enter the Operator's ID",QMessageBox::Ok);
+        return;
     }
     if(State_Ok())
         //send Machine State OK to DB
@@ -137,33 +143,25 @@ void MachineHealth::on_pushButton_save_clicked()
     else
     {
         //send Machine State Not OK, have to make a revision
-        QMessageBox::StandardButton res = QMessageBox::information(this,"Machine state","State not verified",QMessageBox::Yes,QMessageBox::No);
+        QMessageBox::StandardButton res = QMessageBox::information(this,"Machine state","State not verified.\n"
+                                                                                        "Do you want to continue?",QMessageBox::Yes,QMessageBox::No);
         if(res == QMessageBox::No)
             return;
     }
 
-    switch (Format)
-    {
-    case false:
-        //send AM
-        break;
-    case true:
-        //send PM
-        break;
-    }
-//    bool c7 = ui->checkBox_7->isChecked();
-//    bool c8 = ui->checkBox_8->isChecked();
-//    bool c9 = ui->checkBox_9->isChecked();
-//    bool c10 = ui->checkBox_10->isChecked();
-//    bool cEth = ui->checkBox_Eth->isChecked();
-//    bool cVolt = ui->checkBox_Volt->isChecked();
-//    bool cLED = ui->checkBox_LED->isChecked();
-//    bool cOil = ui->checkBox_Oil->isChecked();
-//    bool cRS485 = ui->checkBox_RS485->isChecked();
-//    bool cPres =ui->checkBox_pression->isChecked();
+    qsr.prepare("INSERT INTO mytab (operator_id, machine_id) VALUES (:operator_id, :machine_id);");
+    qsr.bindValue(":operator_id",41);
+    qsr.bindValue(":machine_id",74);
+
+    if(qsr.exec())
+        QMessageBox::information(this, "State","Saved",QMessageBox::Ok);
+    else
+        QMessageBox::information(this, "State", qsr.lastError().text(),QMessageBox::Ok);
 
     Incheck_Boxes();
     ui->lineEdit->clear();
+    ui->lineEdit_Operator_ID->clear();
+    db.close();
 }
 
 bool MachineHealth::State_Ok()
