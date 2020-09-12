@@ -25,11 +25,12 @@ MachineHealth::MachineHealth(QWidget *parent)
     connect(updateTime,&QTimer::timeout, this, &MachineHealth::update);
     updateTime->start(100);
 
-    db = QSqlDatabase::addDatabase("QSQLITE");  //this is the driver for SQL Lite
+    db = QSqlDatabase::addDatabase("QMYSQL3");  //this is the driver for SQL Lite
     db.setPort(3306);
-    db.setHostName("sql2.freemysqlhosting.net");
+    db.setHostName("your host name");
     db.setPassword("YourCode");
     db.setUserName("YourDBName");
+    db.setDatabaseName("YourDBName");
     if(!db.open())
         ui->label->setText("<font color='red'>Failed to connect to database.</font>");
     else
@@ -151,19 +152,43 @@ void MachineHealth::on_pushButton_save_clicked()
             return;
     }
 
-    qsr.prepare("INSERT INTO mytab (operator_id, machine_id) VALUES (:operator_id, :machine_id);");
-    qsr.bindValue(":operator_id",41);
-    qsr.bindValue(":machine_id",74);
+    qsr.prepare("INSERT INTO mytab (operator_id, machine_id, time, date, oil_test, LED_test, eth_test, rs485_test"
+                ", volt_test, pression_test, sw_test, urg_button_test, button_test, test) VALUES (:operator_id, :machine_id, :time, :date"
+                ", :oil_test, :LED_test, :eth_test, :rs485_test, :volt_test, :pression_test, :sw_test, :urg_button_test, :button_test, :test);");
+    qsr.bindValue(":operator_id",ui->lineEdit->text());
+    qsr.bindValue(":machine_id",ui->lineEdit_Operator_ID->text());
+    qsr.bindValue(":time", QTime::currentTime().toString());
+    qsr.bindValue(":date", QDate::currentDate().toString());
+    qsr.bindValue(":oil_test", ui->checkBox_Oil->isChecked());
+    qsr.bindValue(":LED_test",ui->checkBox_LED->isChecked());
+    qsr.bindValue(":eth_test",ui->checkBox_Eth->isChecked());
+    qsr.bindValue(":rs485_test", ui->checkBox_RS485->isChecked());
+    qsr.bindValue(":volt_test", ui->checkBox_Volt->isChecked());
+    qsr.bindValue(":pression_test",ui->checkBox_pression->isChecked());
+    qsr.bindValue(":sw_test",ui->checkBox_7->isChecked());
+    qsr.bindValue(":urg_button_test",ui->checkBox_8->isChecked());
+    qsr.bindValue(":button_test",ui->checkBox_9->isChecked());
+    qsr.bindValue(":test",ui->checkBox_10->isChecked());
 
     if(qsr.exec())
         QMessageBox::information(this, "State","Saved",QMessageBox::Ok);
     else
         QMessageBox::information(this, "State", qsr.lastError().text(),QMessageBox::Ok);
 
+
     Incheck_Boxes();
     ui->lineEdit->clear();
     ui->lineEdit_Operator_ID->clear();
     db.close();
+    ui->label->setText("DataBase closed.");
+    QMessageBox::StandardButton res1 = QMessageBox::information(this,"State","Do you want to make an other check-up?",QMessageBox::Yes,QMessageBox::No);
+    if(res1==QMessageBox::Yes)
+    {
+        if(db.open())
+            ui->label->setText("<font color='green'>Database opened!</font>");
+    }
+    else
+        QApplication::quit();
 }
 
 bool MachineHealth::State_Ok()
