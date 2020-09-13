@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>cam_off.png</file>
+        <file>cam_on.png</file>
+    </qresource>
+</RCC>
