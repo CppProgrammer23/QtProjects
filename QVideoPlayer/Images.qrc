@@ -6,5 +6,6 @@
         <file>play.png</file>
         <file>back.png</file>
         <file>next.png</file>
+        <file>full_screen.png</file>
     </qresource>
 </RCC>
