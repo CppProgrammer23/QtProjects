@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>back.png</file>
+        <file>next.png</file>
+        <file>refresh.png</file>
+        <file>search.png</file>
+        <file>printer_icon.png</file>
+    </qresource>
+</RCC>
