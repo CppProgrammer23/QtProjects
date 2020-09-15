@@ -4,7 +4,7 @@
 
 QVideoPlayer::QVideoPlayer(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::QVideoPlayer), play(false), mute(false), it(avSongs.begin())
+    , ui(new Ui::QVideoPlayer), play(false), mute(false), full(false)
 {
     ui->setupUi(this);
     player = new QMediaPlayer(this);
@@ -28,7 +28,7 @@ QVideoPlayer::QVideoPlayer(QWidget *parent)
     QString ftemp =filename;
     ftemp.remove(filename.size()-4,4);
     QFileInfo fileInfo(ftemp);
-    avSongs.emplace(std::make_pair<>(filename,fileInfo.fileName()));
+    avSongs.insert(filename,fileInfo.fileName());
     ui->movieTitle->setText(fileInfo.fileName());
     it = avSongs.begin();
 
@@ -52,24 +52,33 @@ void QVideoPlayer::timeChanged(qint64 progress)
     ui->lineEdit_time->setText(time.toString());
 }
 
-//void QVideoPlayer::durationChanged(qint64 duration)
-//{
-
-//}
-
 
 void QVideoPlayer::on_play_pausebutton_clicked()
 {
     if(play==false)
     {
         play=true;
-        ui->play_pausebutton->setStyleSheet("image: url(:/images/pause.png);");
+        ui->play_pausebutton->setStyleSheet("image: url(:/images/pause.png);"
+                                            "background-color: rgb(190,190,190);"
+                                            "border-style: outset;"
+                                            "border-width: 0px;"
+                                            "border-radius: 10px;"
+                                            "font: bold 15px;"
+                                            "min-width: 2em;"
+                                            "padding: 6px;");
         player->play();
     }
     else
     {
         play=false;
-        ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);");
+        ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);"
+                                            "background-color: rgb(190,190,190);"
+                                            "border-style: outset;"
+                                            "border-width: 0px;"
+                                            "border-radius: 10px;"
+                                            "font: bold 15px;"
+                                            "min-width: 2em;"
+                                            "padding: 6px;");
         player->pause();
     }
 
@@ -81,9 +90,19 @@ void QVideoPlayer::on_horizontalSlider_time_sliderMoved(int position)
     player->setPosition(position);
 }
 
+
 void QVideoPlayer::on_soundSlider_sliderMoved(int position)
 {
     qreal linearVolume = QAudio::convertVolume(position / qreal(100.0),
+                                                  QAudio::LogarithmicVolumeScale,
+                                                  QAudio::LinearVolumeScale);
+
+       player->setVolume(qRound(linearVolume * 100));
+}
+
+void QVideoPlayer::on_soundSlider_valueChanged(int value)
+{
+    qreal linearVolume = QAudio::convertVolume(value / qreal(100.0),
                                                   QAudio::LogarithmicVolumeScale,
                                                   QAudio::LinearVolumeScale);
 
@@ -95,14 +114,28 @@ void QVideoPlayer::on_pushButton_clicked()
     if(mute==false)
     {
         mute=true;
-        ui->pushButton->setStyleSheet("image: url(:/images/sound_off.png);");
+        ui->pushButton->setStyleSheet("image: url(:/images/sound_off.png);"
+                                      "background-color: rgb(190,190,190);"
+                                      "border-style: outset;"
+                                      "border-width: 0px;"
+                                      "border-radius: 10px;"
+                                      "font: bold 15px;"
+                                      "min-width: 2em;"
+                                      "padding: 6px;");
         ui->soundSlider->setEnabled(false);
         player->setMuted(true);
     }
     else
     {
         mute=false;
-        ui->pushButton->setStyleSheet("image: url(:/images/sound_on.png);");
+        ui->pushButton->setStyleSheet("image: url(:/images/sound_on.png);"
+                                      "background-color: rgb(190,190,190);"
+                                      "border-style: outset;"
+                                      "border-width: 0px;"
+                                      "border-radius: 10px;"
+                                      "font: bold 15px;"
+                                      "min-width: 2em;"
+                                      "padding: 6px;");
         ui->soundSlider->setEnabled(true);
         player->setMuted(false);
     }
@@ -117,14 +150,14 @@ void QVideoPlayer::on_actionOpen_triggered()
     {
         for(auto i:avSongs)
         {
-            if(file==i.first)
+            if(file==i)
             {
                 QMessageBox::information(this,"Error","This playlist already exists.",QMessageBox::Ok);
                 goto L;
             }
         }
         QFileInfo fileinfo(filetemp);
-        avSongs.emplace(std::make_pair<>(file,fileinfo.fileName()));
+        avSongs.insert(file,fileinfo.fileName());
     }
 L:
 
@@ -148,30 +181,69 @@ void QVideoPlayer::on_nextbutton_clicked()
     }
     if(it != avSongs.end())
     {
-        player->setMedia(QUrl(it->first));
-        ui->movieTitle->setText(it->second);
+        player->setMedia(QUrl(it.key()));
+        ui->movieTitle->setText(it.value());
+        if(play!=true)
+            player->pause();
+        else
+            player->play();
     }
     else
     {
         it=avSongs.begin();
-        player->setMedia(QUrl(it->first));
-        ui->movieTitle->setText(it->second);
+        player->setMedia(QUrl(it.key()));
+        ui->movieTitle->setText(it.value());
+        player->pause();
+        play=false;
+        ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);"
+                                            "background-color: rgb(190,190,190);"
+                                            "border-style: outset;"
+                                            "border-width: 0px;"
+                                            "border-radius: 10px;"
+                                            "font: bold 15px;"
+                                            "min-width: 2em;"
+                                            "padding: 6px;");
     }
 }
 
 void QVideoPlayer::on_actionJump_to_begin_triggered()
 {
-    it=avSongs.begin();
-    player->setMedia(QUrl(it->first));
-    ui->movieTitle->setText(it->second);
+    play=false;
+    if(it!=avSongs.begin())
+        it=avSongs.begin();
+
+     player->setMedia(QUrl(it.key()));
+     player->pause();
+     ui->movieTitle->setText(it.value());
+     ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);"
+                                          "background-color: rgb(190,190,190);"
+                                          "border-style: outset;"
+                                          "border-width: 0px;"
+                                          "border-radius: 10px;"
+                                          "font: bold 15px;"
+                                          "min-width: 2em;"
+                                          "padding: 6px;");
 }
 
 void QVideoPlayer::on_actionJump_to_end_triggered()
 {
-    it=avSongs.end();
-    it--;
-    player->setMedia(QUrl(it->first));
-    ui->movieTitle->setText(it->second);
+    play=false;
+    if(it!=avSongs.end())
+    {
+        it=avSongs.end();
+        it--;
+    }
+    player->setMedia(QUrl(it.key()));
+    player->pause();
+    ui->movieTitle->setText(it.value());
+    ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);"
+                                        "background-color: rgb(190,190,190);"
+                                        "border-style: outset;"
+                                        "border-width: 0px;"
+                                        "border-radius: 10px;"
+                                        "font: bold 15px;"
+                                        "min-width: 2em;"
+                                        "padding: 6px;");
 }
 
 void QVideoPlayer::on_back_button_clicked()
@@ -185,13 +257,122 @@ void QVideoPlayer::on_back_button_clicked()
     {
         it=avSongs.end();
         it--;
-        player->setMedia(QUrl(it->first));
-        ui->movieTitle->setText(it->second);
+        player->setMedia(QUrl(it.key()));
+        ui->movieTitle->setText(it.value());
+        player->pause();
+        play=false;
+        ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);"
+                                            "background-color: rgb(190,190,190);"
+                                            "border-style: outset;"
+                                            "border-width: 0px;"
+                                            "border-radius: 10px;"
+                                            "font: bold 15px;"
+                                            "min-width: 2em;"
+                                            "padding: 6px;");
     }
     else
     {
         it--;
-        player->setMedia(QUrl(it->first));
-        ui->movieTitle->setText(it->second);
+        player->setMedia(QUrl(it.key()));
+        ui->movieTitle->setText(it.value());
+        if(play!=true)
+            player->pause();
+        else
+            player->play();
+    }
+}
+// pressed and released button.
+void QVideoPlayer::on_play_pausebutton_pressed()
+{
+    if(play==false)
+        ui->play_pausebutton->setStyleSheet("image: url(:/images/pause.png);"
+                                            "background-color: rgb(160,160,160);"
+                                            "border-style: outset;"
+                                            "border-width: 0px;"
+                                            "border-radius: 10px;"
+                                            "font: bold 15px;"
+                                            "min-width: 2em;"
+                                            "padding: 6px;");
+    else
+        ui->play_pausebutton->setStyleSheet("image: url(:/images/play.png);"
+                                            "background-color: rgb(160,160,160);"
+                                            "border-style: outset;"
+                                            "border-width: 0px;"
+                                            "border-radius: 10px;"
+                                            "font: bold 15px;"
+                                            "min-width: 2em;"
+                                            "padding: 6px;");
+}
+
+void QVideoPlayer::on_play_pausebutton_released()
+{
+    ui->play_pausebutton->setStyleSheet("background-color: rgb(190,190,190);"
+                                        "border-style: outset;"
+                                        "border-width: 0px;"
+                                        "border-radius: 10px;"
+                                        "font: bold 15px;"
+                                        "min-width: 2em;"
+                                       "padding: 6px;");
+}
+
+void QVideoPlayer::on_nextbutton_pressed()
+{
+    ui->nextbutton->setStyleSheet("image: url(:/images/next.png);"
+                                  "background-color: rgb(160,160,160);"
+                                  "border-style: outset;"
+                                  "border-width: 0px;"
+                                  "border-radius: 10px;"
+                                  "font: bold 15px;"
+                                  "min-width: 2em;"
+                                 "padding: 6px;");
+}
+
+void QVideoPlayer::on_nextbutton_released()
+{
+    ui->nextbutton->setStyleSheet("image: url(:/images/next.png);"
+                                  "background-color: rgb(190,190,190);"
+                                  "border-style: outset;"
+                                   "border-width: 0px;"
+                                   "border-radius: 10px;"
+                                   "font: bold 15px;"
+                                   "min-width: 2em;"
+                                   "padding: 6px;");
+}
+
+void QVideoPlayer::on_back_button_pressed()
+{
+    ui->back_button->setStyleSheet("image: url(:/images/back.png);"
+                                   "background-color: rgb(160,160,160);"
+                                   "border-style: outset;"
+                                   "border-width: 0px;"
+                                   "border-radius: 10px;"
+                                   "font: bold 15px;"
+                                   "min-width: 2em;"
+                                  "padding: 6px;");
+}
+
+void QVideoPlayer::on_back_button_released()
+{
+    ui->back_button->setStyleSheet("image: url(:/images/back.png);"
+                                   "background-color: rgb(190,190,190);"
+                                   "border-style: outset;"
+                                   "border-width: 0px;"
+                                   "border-radius: 10px;"
+                                   "font: bold 15px;"
+                                   "min-width: 2em;"
+                                  "padding: 6px;");
+}
+
+void QVideoPlayer::on_fullScreen_clicked()
+{
+    if(full==false)
+    {
+        showFullScreen();
+        full=true;
+    }
+    else
+    {
+        showNormal();
+        full=false;
     }
 }
