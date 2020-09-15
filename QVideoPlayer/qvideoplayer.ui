@@ -89,11 +89,19 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,1,0,1">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,0,1,0,1">
       <item>
        <widget class="QPushButton" name="back_button">
         <property name="styleSheet">
-         <string notr="true">image: url(:/images/back.png);</string>
+         <string notr="true">image: url(:/images/back.png);
+
+background-color: rgb(190,190,190);
+    border-style: outset;
+    border-width: 0px;
+    border-radius: 10px;
+    font: bold 15px;
+    min-width: 2em;
+    padding: 6px;</string>
         </property>
         <property name="text">
          <string/>
@@ -103,7 +111,15 @@
       <item>
        <widget class="QPushButton" name="play_pausebutton">
         <property name="styleSheet">
-         <string notr="true">image: url(:/images/play.png);</string>
+         <string notr="true">image: url(:/images/play.png);
+
+background-color: rgb(190,190,190);
+    border-style: outset;
+    border-width: 0px;
+    border-radius: 10px;
+    font: bold 15px;
+    min-width: 2em;
+    padding: 6px;</string>
         </property>
         <property name="text">
          <string/>
@@ -113,7 +129,25 @@
       <item>
        <widget class="QPushButton" name="nextbutton">
         <property name="styleSheet">
-         <string notr="true">image: url(:/images/next.png);</string>
+         <string notr="true">image: url(:/images/next.png);
+
+background-color: rgb(190,190,190);
+    border-style: outset;
+    border-width: 0px;
+    border-radius: 10px;
+    font: bold 15px;
+    min-width: 2em;
+    padding: 6px;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="fullScreen">
+        <property name="styleSheet">
+         <string notr="true">image: url(:/images/full_screen.png);</string>
         </property>
         <property name="text">
          <string/>
@@ -137,7 +171,14 @@
        <widget class="QPushButton" name="pushButton">
         <property name="styleSheet">
          <string notr="true">image: url(:/images/sound_on.png);
-background:transparent;</string>
+background-color: rgb(190,190,190);
+    border-style: outset;
+    border-width: 0px;
+    border-radius: 10px;
+    font: bold 15px;
+    min-width: 2em;
+    padding: 6px;
+</string>
         </property>
         <property name="text">
          <string/>
