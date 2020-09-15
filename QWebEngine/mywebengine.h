@@ -6,6 +6,7 @@
 #include <QPaintEvent>
 #include <QWebEnginePage>
 #include <QWebEngineHistory>
+#include "history.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class myWebEngine; }
@@ -53,6 +54,11 @@ private:
 
     QWebEnginePage h;
     QWebEngineHistory *history = h.history();
+
+    History *hs;
+public:
+    QList<QWebEngineHistoryItem> l;
+    static QList<QString> ls;
 
 };
 #endif // MYWEBENGINE_H
