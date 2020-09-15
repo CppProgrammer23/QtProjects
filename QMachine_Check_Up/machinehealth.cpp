@@ -9,9 +9,10 @@
 #include<QtSql>
 
 
+
 MachineHealth::MachineHealth(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MachineHealth)
+    , ui(new Ui::MachineHealth), set12(true)
 {
     ui->setupUi(this);
 
@@ -27,64 +28,46 @@ MachineHealth::MachineHealth(QWidget *parent)
 
     db = QSqlDatabase::addDatabase("QMYSQL3");  //this is the driver for SQL Lite
     db.setPort(3306);
-    db.setHostName("your host name");
-    db.setPassword("YourCode");
-    db.setUserName("YourDBName");
-    db.setDatabaseName("YourDBName");
+    db.setHostName("sql2.freemysqlhosting.net");
+    db.setPassword("idriss2303");
+    db.setUserName("sql2364692");
+    db.setDatabaseName("sql2364692");
     if(!db.open())
         ui->label->setText("<font color='red'>Failed to connect to database.</font>");
     else
-        ui->label->setText("<font color='green'>Connected to database and Opened.</font>");
+        ui->label->setText("<font color='green'>Connected to database and opened.</font>");
+    l = db.tables();
+    for(auto i=0;i<l.size();i++)
+        ui->combo_Table->addItem(l.at(i));
+
+    at = new AddTable;
 
 }
+QSqlDatabase MachineHealth::db;
+QVector <QString> MachineHealth::TableContains;
 
 MachineHealth::~MachineHealth()
 {
     delete ui;
+    delete updateTime;
+    delete at;
 }
 
 
 void MachineHealth::on_comboBox_currentTextChanged(const QString &arg1)
 {
     if(arg1=="12-hour")
-    {
-        set12hour();
         set12=true;
-        set24=false;
-    }
     else
-    {
-        set24hour();
-        set24=true;
         set12=false;
-    }
-}
-
-void MachineHealth::set12hour()
-{
-    QTime t;
-    ui->comboBox_HFormat->setHidden(false);
-    if(myT.hour()>12)
-    {
-        t.setHMS(myT.hour()-12,myT.minute(),myT.second());
-        ui->timeEdit->setTime(t);
-        Format=true;
-    }
-    else
-        Format=false;
-}
-
-void MachineHealth::set24hour()
-{
-    ui->comboBox_HFormat->setHidden(true);
-    ui->timeEdit->setTime(iT);
 }
 
 void MachineHealth::on_pushButton_clear_clicked()
 {
     if(!ui->checkBox_7->isChecked() && !ui->checkBox_8->isChecked() && !ui->checkBox_9->isChecked() && !ui->checkBox_10->isChecked()
             && !ui->checkBox_Eth->isChecked() && !ui->checkBox_LED->isChecked() && !ui->checkBox_Oil->isChecked() && !ui->checkBox_Volt->isChecked()
-            && !ui->checkBox_RS485->isChecked() && !ui->checkBox_pression->isChecked())
+            && !ui->checkBox_RS485->isChecked() && !ui->checkBox_pression->isChecked() && ui->lineEdit->text()==""
+            && ui->lineEdit_Operator_ID->text()=="")
         return;
     ui->checkBox_7->setCheckState(Qt::CheckState::Unchecked);
     ui->checkBox_8->setCheckState(Qt::CheckState::Unchecked);
@@ -97,6 +80,7 @@ void MachineHealth::on_pushButton_clear_clicked()
     ui->checkBox_RS485->setCheckState(Qt::CheckState::Unchecked);
     ui->checkBox_pression->setCheckState(Qt::CheckState::Unchecked);
     ui->lineEdit->clear();
+    ui->lineEdit_Operator_ID->clear();
 }
 
 
@@ -104,11 +88,6 @@ void MachineHealth::on_pushButton_clear_clicked()
 void MachineHealth::on_pushButton_clicked()
 {
     QApplication::quit();
-}
-
-void MachineHealth::on_actionNew_2_triggered()
-{
-    on_pushButton_clear_clicked();
 }
 
 void MachineHealth::on_actionClose_triggered()
@@ -125,9 +104,10 @@ void MachineHealth::on_actionVersion_triggered()
 
 void MachineHealth::on_pushButton_save_clicked()
 {
-   if(!db.open())
+    if(!db.open())
         db.open();
     QSqlQuery qsr(db);
+    QString temp;
     QString Machine_ID = ui->lineEdit->text();
     QString Operator_ID =ui->lineEdit_Operator_ID->text();
     if(Machine_ID=="")
@@ -140,6 +120,12 @@ void MachineHealth::on_pushButton_save_clicked()
         QMessageBox::information(this,"Error","Please enter the Operator's ID",QMessageBox::Ok);
         return;
     }
+    if(ui->combo_Table->currentText()=="")
+    {
+        QMessageBox::information(this,"Error","Please choose a table to save data",QMessageBox::Ok);
+        return;
+    }
+
     if(State_Ok())
         //send Machine State OK to DB
         QMessageBox::information(this,"Machine state","State verified",QMessageBox::Ok);
@@ -151,12 +137,14 @@ void MachineHealth::on_pushButton_save_clicked()
         if(res == QMessageBox::No)
             return;
     }
-
-    qsr.prepare("INSERT INTO mytab (operator_id, machine_id, time, date, oil_test, LED_test, eth_test, rs485_test"
-                ", volt_test, pression_test, sw_test, urg_button_test, button_test, test) VALUES (:operator_id, :machine_id, :time, :date"
-                ", :oil_test, :LED_test, :eth_test, :rs485_test, :volt_test, :pression_test, :sw_test, :urg_button_test, :button_test, :test);");
-    qsr.bindValue(":operator_id",ui->lineEdit->text());
-    qsr.bindValue(":machine_id",ui->lineEdit_Operator_ID->text());
+    temp="INSERT INTO ";
+    temp+=ui->combo_Table->currentText();
+    temp+=" (operator_id, machine_id, time, date, oil_test, LED_test, eth_test, rs485_test"
+          ", volt_test, pression_test, sw_test, urg_button_test, button_test, test) VALUES (:operator_id, :machine_id, :time, :date"
+          ", :oil_test, :LED_test, :eth_test, :rs485_test, :volt_test, :pression_test, :sw_test, :urg_button_test, :button_test, :test);";
+    qsr.prepare(temp);
+    qsr.bindValue(":operator_id",ui->lineEdit_Operator_ID->text());
+    qsr.bindValue(":machine_id",ui->lineEdit->text());
     qsr.bindValue(":time", QTime::currentTime().toString());
     qsr.bindValue(":date", QDate::currentDate().toString());
     qsr.bindValue(":oil_test", ui->checkBox_Oil->isChecked());
@@ -171,7 +159,7 @@ void MachineHealth::on_pushButton_save_clicked()
     qsr.bindValue(":test",ui->checkBox_10->isChecked());
 
     if(qsr.exec())
-        QMessageBox::information(this, "State","Saved",QMessageBox::Ok);
+        QMessageBox::information(this, "State","Saved to: "+ui->combo_Table->currentText(),QMessageBox::Ok);
     else
         QMessageBox::information(this, "State", qsr.lastError().text(),QMessageBox::Ok);
 
@@ -226,22 +214,46 @@ void MachineHealth::on_actionContact_SOS_triggered()
 
 void MachineHealth::update()
 {
-    QTime t;
     if(set12==true)
     {
-        if(myT.hour()>12)
-        {
-            t.setHMS(myT.hour()-12,myT.minute(),myT.second());
-            ui->timeEdit->setTime(t);
-        }
-        else
-        {
-            ui->comboBox_HFormat->setCurrentIndex(0);
-            ui->timeEdit->setTime(QTime::currentTime());
-        }
+        ui->timeEdit->setDisplayFormat("hh:mm A");
+
+        ui->timeEdit->setTime(QTime::currentTime());
     }
     else
+    {
+        ui->timeEdit->setDisplayFormat("HH:mm");
         ui->timeEdit->setTime(QTime::currentTime());
+    }
     ui->dateEdit->setDate(QDate::currentDate());
+}
 
+void MachineHealth::on_database_button_clicked()
+{
+    QDesktopServices::openUrl(QUrl("http://www.phpmyadmin.co"));
+}
+
+void MachineHealth::on_actionOpen_2_triggered()
+{
+    on_database_button_clicked();
+}
+
+void MachineHealth::on_actionNew_file_triggered()
+{
+    on_pushButton_clear_clicked();
+}
+
+void MachineHealth::on_actionCreate_new_table_triggered()
+{
+    at->open();
+}
+
+void MachineHealth::paintEvent(QPaintEvent *)
+{
+    if(ui->combo_Table->isVisible())
+    {
+        for(auto i=0;i<TableContains.size();i++)
+            ui->combo_Table->addItem(TableContains.at(i));
+        TableContains.clear();
+    }
 }
