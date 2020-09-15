@@ -20,13 +20,17 @@ myWebEngine::myWebEngine(QWidget *parent)
     ui->history->setToolTip("Go to history");
     webview=new QWebEngineView(ui->webviewFrame);
     webview->load(QUrl("https://qt.io"));
+    ls.push_back("https://qt.io");
     connect(webview, &QWebEngineView::loadProgress, ui->viewwebLoading, &QProgressBar::setValue);
     //webview->setEnabled(false);
+    hs = new History();
 }
+QList<QString> myWebEngine::ls; //to be shared by all the instances
 
 myWebEngine::~myWebEngine()
 {
     delete ui;
+    delete hs;
 }
 
 void myWebEngine::paintEvent(QPaintEvent *event)
@@ -82,6 +86,8 @@ void myWebEngine::on_searchbutton_clicked()
 {
     forward++;
     Loading();
+    if(str!="")
+        ls.push_back(str);
     webview->load(QUrl(str));
 }
 
@@ -105,7 +111,8 @@ void myWebEngine::on_print_clicked()
 
 void myWebEngine::on_history_clicked()
 {
-    QList<QWebEngineHistoryItem> l = history->items();
+    //l = history->items();
+    hs->open();
 }
 
 void myWebEngine::on_actionSearch_triggered()
