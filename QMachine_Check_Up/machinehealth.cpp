@@ -27,11 +27,11 @@ MachineHealth::MachineHealth(QWidget *parent)
     updateTime->start(100);
 
     db = QSqlDatabase::addDatabase("QMYSQL3");  //this is the driver for SQL Lite
-    db.setPort(3306);
-    db.setHostName("sql2.freemysqlhosting.net");
-    db.setPassword("idriss2303");
-    db.setUserName("sql2364692");
-    db.setDatabaseName("sql2364692");
+    db.setPort(yourport);
+    db.setHostName("your host");
+    db.setPassword("yourpasswort");
+    db.setUserName("username");
+    db.setDatabaseName("username");
     if(!db.open())
         ui->label->setText("<font color='red'>Failed to connect to database.</font>");
     else
