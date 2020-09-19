@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/imag">
+        <file>not visible.png</file>
+        <file>visible.png</file>
+    </qresource>
+</RCC>
