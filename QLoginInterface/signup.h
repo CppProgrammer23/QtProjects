@@ -20,8 +20,21 @@ private slots:
 
     void on_okbutton_clicked();
 
+    void on_visible_clicked();
+
 private:
+    bool verifyMail(const QString&);
+
+    bool verifyPass(const QString&);
+
+    void clearAll();
+
+    void paintEvent(QPaintEvent*) override;
+
     Ui::SignUp *ui;
+
+    bool visible;
 };
 
 #endif // SIGNUP_H
+
