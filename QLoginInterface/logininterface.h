@@ -27,6 +27,7 @@ private slots:
 private:
     Ui::LoginInterface *ui;
     bool visible;
+    SignUp *s = new SignUp;
 
 public:
     static QSqlDatabase db;
