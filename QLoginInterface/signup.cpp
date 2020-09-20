@@ -3,12 +3,14 @@
 #include <QSqlQuery>
 #include "logininterface.h"
 #include <QMessageBox>
+#include <QPaintEvent>
 
 SignUp::SignUp(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SignUp)
+    ui(new Ui::SignUp),visible(false)
 {
     ui->setupUi(this);
+    this->setFixedSize(395,300);
 }
 
 SignUp::~SignUp()
@@ -18,12 +20,23 @@ SignUp::~SignUp()
 
 void SignUp::on_cancelbutton_clicked()
 {
+    clearAll();
     QDialog::close();
 }
 
 void SignUp::on_okbutton_clicked()
 {
     QString mail = ui->lineEmailEdit->text();
+    if(ui->labelEmailInfo->text()!="")
+        ui->labelEmailInfo->clear();
+    if(!verifyMail(mail))
+    {
+        ui->labelEmailInfo->setText("<font color='red'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    "Mail format not recognized.</font>");
+        return;
+    }
     if(ui->linePassEdit->text()=="")
     {
         QMessageBox::information(this,"State","There is no password, please enter one");
@@ -60,5 +73,80 @@ void SignUp::on_okbutton_clicked()
             QMessageBox::information(this,"Error","User already exist",QMessageBox::Ok);
 
     }
+    clearAll();
+}
 
+bool SignUp::verifyMail(const QString& str)
+{
+    if(str.endsWith("@outlook.com") || str.endsWith("@yahoo.com") || str.endsWith("@hotmail.com") || str.endsWith("@gmail.com"))
+        return true;
+    return false;
+}
+
+bool SignUp::verifyPass(const QString& str)
+{
+    bool up=false, num=false, low=false;
+    for(auto i:str)
+    {
+        if(i <91 && i>64)
+            up = true;
+        else if(i<58 && i>47)
+            num=true;
+        else if(i<123 && i>96)
+            low =true;
+    }
+    if(up && num && low)
+        return true;
+    return false;
+}
+
+void SignUp::clearAll()
+{
+    ui->labelEmailInfo->clear();
+    ui->lineNameEdit->clear();
+    ui->linePassEdit->clear();
+    ui->linePassAgainEdit->clear();
+    ui->lineEmailEdit->clear();
+    ui->lineSurnmeEdit->clear();
+    ui->labelPass->clear();
+}
+
+void SignUp::paintEvent(QPaintEvent *)
+{
+    if(verifyPass(ui->linePassEdit->text()))
+    {
+        if(ui->linePassEdit->text()==ui->linePassAgainEdit->text() && ui->linePassEdit->text()!="")
+            ui->labelPass->setText("<font color='green'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                   "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                   "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                   "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                   "Same password.</font>");
+        else
+            ui->labelPass->clear();
+    }
+    else
+    {
+        if(ui->linePassEdit->text()!="")
+            ui->labelPass->setText("<font color='red'>&nbsp;Password doesn't contain upper, lower and numeric characters.</font>");
+        else
+            ui->labelPass->clear();
+        }
+}
+
+
+
+void SignUp::on_visible_clicked()
+{
+    if(visible==false)
+    {
+        visible=true;
+        ui->linePassEdit->setEchoMode(QLineEdit::Normal);
+        ui->visible->setStyleSheet("image: url(:/imag/not visible.png);");
+    }
+    else
+    {
+        visible=false;
+        ui->linePassEdit->setEchoMode(QLineEdit::Password);
+        ui->visible->setStyleSheet("image: url(:/imag/visible.png);");
+    }
 }
