@@ -75,7 +75,23 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,2">
+    <widget class="QLabel" name="labelEmailInfo">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,2,0">
      <item>
       <widget class="QLineEdit" name="line_pass">
        <property name="enabled">
@@ -90,7 +106,21 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="linePassEdit"/>
+      <widget class="QLineEdit" name="linePassEdit">
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="visible">
+       <property name="styleSheet">
+        <string notr="true">image: url(:/imag/visible.png);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -102,7 +132,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Re-tape your password:</string>
+        <string>Type again:</string>
        </property>
        <property name="frame">
         <bool>false</bool>
@@ -110,9 +140,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="linePassAgainEdit"/>
+      <widget class="QLineEdit" name="linePassAgainEdit">
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelPass">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QPushButton" name="okbutton">
