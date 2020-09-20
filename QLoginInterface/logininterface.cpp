@@ -10,12 +10,13 @@ LoginInterface::LoginInterface(QWidget *parent)
     , ui(new Ui::LoginInterface), visible(false)
 {
     ui->setupUi(this);
+    this->setFixedSize(600,250);
     db = QSqlDatabase::addDatabase("QMYSQL3");  //this is the driver for SQL Lite
     db.setPort(3306);
-    db.setHostName("yourHost");
-    db.setPassword("YourPass");
-    db.setUserName("DBName");
-    db.setDatabaseName("DBName");
+    db.setHostName("sql2.freemysqlhosting.net");
+    db.setPassword("Idriss2303");
+    db.setUserName("sql2365946");
+    db.setDatabaseName("sql2365946");
     if(db.open())
         ui->testConnection->setChecked(true);
     else
@@ -26,6 +27,7 @@ LoginInterface::LoginInterface(QWidget *parent)
 LoginInterface::~LoginInterface()
 {
     delete ui;
+    delete s;
 }
 
 QSqlDatabase LoginInterface::db;
@@ -71,6 +73,5 @@ void LoginInterface::on_visiblepass_clicked()
 
 void LoginInterface::on_createbutton_clicked()
 {
-    SignUp *s = new SignUp;
     s->open();
 }
