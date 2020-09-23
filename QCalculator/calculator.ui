@@ -24,9 +24,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
+      <y>100</y>
       <width>331</width>
-      <height>111</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="palette">
@@ -279,7 +279,7 @@ color: rgb(100,100,100);
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>270</y>
+      <y>390</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -303,7 +303,7 @@ color: rgb(100,100,100);
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>270</y>
+      <y>390</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -327,7 +327,7 @@ color: rgb(100,100,100);
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>270</y>
+      <y>390</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -423,7 +423,7 @@ color: rgb(100,100,100);
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>390</y>
+      <y>270</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -447,7 +447,7 @@ color: rgb(100,100,100);
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>390</y>
+      <y>270</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -471,7 +471,7 @@ color: rgb(100,100,100);
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>390</y>
+      <y>270</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -702,8 +702,8 @@ color: rgb(100,100,100);
    <widget class="QPushButton" name="buttonscientific">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>0</y>
+      <x>330</x>
+      <y>10</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -721,6 +721,25 @@ color: rgb(100,100,100);
     </property>
     <property name="text">
      <string>Sc.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>50</y>
+      <width>281</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+	color: rgb(255, 255, 255);
+  qproperty-alignment: 'AlignVCenter | AlignRight';
+}</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
