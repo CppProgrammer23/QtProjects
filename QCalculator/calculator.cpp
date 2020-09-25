@@ -23,6 +23,9 @@ Calculator::Calculator(QWidget *parent)
     connect(ui->button9, SIGNAL(released()), this,SLOT(digitClicked()));
     connect(ui->buttonpoint, SIGNAL(released()), this,SLOT(digitClicked()));
 
+
+
+
     //operator connection
     connect(ui->buttonmult,SIGNAL(released()),this, SLOT(operatorClicked()));
     connect(ui->buttonminus,SIGNAL(released()),this, SLOT(operatorClicked()));
@@ -38,7 +41,7 @@ Calculator::~Calculator()
 void Calculator::createButton()
 {
     QVBoxLayout *layout=new QVBoxLayout();
-    pblog = new QPushButton("log2",this);
+    pblog2 = new QPushButton("log2",this);
     pbsqrt = new QPushButton("√x",this);
     pbfact = new QPushButton("x!",this);
     pbinv = new QPushButton("1/x",this);
@@ -50,8 +53,17 @@ void Calculator::createButton()
     pb10 = new QPushButton("10",this);
     pbln = new QPushButton("ln",this);
     pbrand = new QPushButton("Rand",this);
+    pbpow2 = new QPushButton("x²",this);
+    pbpow3 = new QPushButton ("x^3",this);
+    pblog10 =new QPushButton ("log",this);
+    pbE = new QPushButton("E",this);
+    pbsin1 = new QPushButton("sin-1",this);
+    pbcos1 = new QPushButton("cos-1",this);
+    pbtan1= new QPushButton ("tan-1",this);
+    pbxy = new QPushButton("x^y",this);
 
-    pblog->setStyleSheet("QPushButton{"
+
+    pblog2->setStyleSheet("QPushButton{"
                       "color: rgb(255, 255, 255);"
                       "border: 1px solid gray;border-radius: 25px;}"
 
@@ -159,8 +171,80 @@ void Calculator::createButton()
                              " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                                                                 "stop: 0 #dadbde, stop: 1 #f6f7fa);"
                           "}");
+    pbpow2->setStyleSheet("QPushButton{"
+                         "color: rgb(255, 255, 255);"
+                         "border: 1px solid gray;border-radius: 25px;}"
 
-    layout->addWidget(pblog);
+                         "QPushButton:pressed {"
+                         "color: rgb(100,100,100);"
+                            " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                               "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                         "}");
+    pbpow3->setStyleSheet("QPushButton{"
+                          "color: rgb(255, 255, 255);"
+                          "border: 1px solid gray;border-radius: 25px;}"
+
+                          "QPushButton:pressed {"
+                          "color: rgb(100,100,100);"
+                             " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                                "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                          "}");
+    pblog10->setStyleSheet("QPushButton{"
+                           "color: rgb(255, 255, 255);"
+                           "border: 1px solid gray;border-radius: 25px;}"
+
+                           "QPushButton:pressed {"
+                           "color: rgb(100,100,100);"
+                              " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                                 "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                           "}");
+    pbE->setStyleSheet("QPushButton{"
+                       "color: rgb(255, 255, 255);"
+                       "border: 1px solid gray;border-radius: 25px;}"
+
+                       "QPushButton:pressed {"
+                       "color: rgb(100,100,100);"
+                          " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                             "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                       "}");
+    pbsin1->setStyleSheet("QPushButton{"
+                          "color: rgb(255, 255, 255);"
+                          "border: 1px solid gray;border-radius: 25px;}"
+
+                          "QPushButton:pressed {"
+                          "color: rgb(100,100,100);"
+                             " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                                "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                          "}");
+    pbcos1->setStyleSheet("QPushButton{"
+                          "color: rgb(255, 255, 255);"
+                          "border: 1px solid gray;border-radius: 25px;}"
+
+                          "QPushButton:pressed {"
+                          "color: rgb(100,100,100);"
+                             " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                                "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                          "}");
+    pbtan1->setStyleSheet("QPushButton{"
+                          "color: rgb(255, 255, 255);"
+                          "border: 1px solid gray;border-radius: 25px;}"
+
+                          "QPushButton:pressed {"
+                          "color: rgb(100,100,100);"
+                             " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                                "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                          "}");
+    pbxy->setStyleSheet("QPushButton{"
+                        "color: rgb(255, 255, 255);"
+                        "border: 1px solid gray;border-radius: 25px;}"
+
+                        "QPushButton:pressed {"
+                        "color: rgb(100,100,100);"
+                           " background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                              "stop: 0 #dadbde, stop: 1 #f6f7fa);"
+                        "}");
+
+    layout->addWidget(pblog2);
     layout->addWidget(pbsqrt);
     layout->addWidget(pbfact);
     layout->addWidget(pbinv);
@@ -172,8 +256,16 @@ void Calculator::createButton()
     layout->addWidget(pb10);
     layout->addWidget(pbln);
     layout->addWidget(pbrand);
+    layout->addWidget(pbpow2);
+    layout->addWidget(pbpow3);
+    layout->addWidget(pblog10);
+    layout->addWidget(pbE);
+    layout->addWidget(pbsin1);
+    layout->addWidget(pbcos1);
+    layout->addWidget(pbtan1);
+    layout->addWidget(pbxy);
 
-    pblog->setGeometry(190,195,50,50);
+    pblog2->setGeometry(190,195,50,50);
     pbsqrt->setGeometry(130,195,50,50);
     pbfact->setGeometry(70,195,50,50);
     pbinv->setGeometry(10,195,50,50);
@@ -185,8 +277,16 @@ void Calculator::createButton()
     pb10->setGeometry(130,320,50,50);
     pbln->setGeometry(70,320,50,50);
     pbrand->setGeometry(10,320,50,50);
+    pbpow2->setGeometry(190,390,50,50);
+    pbpow3->setGeometry(130,390,50,50);
+    pblog10->setGeometry(70,390,50,50);
+    pbE->setGeometry(10,390,50,50);
+    pbsin1->setGeometry(190,450,50,50);
+    pbcos1->setGeometry(130,450,50,50);
+    pbtan1->setGeometry(70,450,50,50);
+    pbxy->setGeometry(10,450,50,50);
 
-    pblog->show();
+    pblog2->show();
     pbsqrt->show();
     pbfact->show();
     pbinv->show();
@@ -198,15 +298,28 @@ void Calculator::createButton()
     pb10->show();
     pbln->show();
     pbrand->show();
+    pbpow2->show();
+    pbpow3->show();
+    pblog10->show();
+    pbE->show();
+    pbsin1->show();
+    pbcos1->show();
+    pbtan1->show();
+    pbxy->show();
 }
 
 void Calculator::digitClicked()
 {
     QPushButton* button = (QPushButton*)sender();
     if(ui->label->text()=="nan" || ui->label_2->text().endsWith("="))
+    {
         ui->label_2->clear();
-    if(ui->label->text()=="0" || ui->label->text()=="nan" || ui->label_2->text().endsWith("="))
         ui->label->clear();
+    }
+    if(ui->label->text()=="0")
+    {
+        ui->label->clear();
+    }
 
     QString lab = ui->label->text() + button->text();
     lab1=ui->label_2->text() + button->text();
@@ -216,6 +329,21 @@ void Calculator::digitClicked()
     else
         val = lab.toDouble();
     ui->label->setText(lab);
+    ui->label_2->setText(lab1);
+}
+
+void Calculator::specialClicked()
+{
+    QPushButton *b = (QPushButton*)sender();
+    lab1+=b->text();
+    if(b->text()=="𝛑")
+    {
+        if(minus || plus || mul || div)
+            val1=3.14159265;
+        else
+            val=3.14159265;
+    }
+    ui->label->setText(lab1);
     ui->label_2->setText(lab1);
 }
 
@@ -238,6 +366,7 @@ void Calculator::operatorClicked()
 
 void Calculator::on_buttonAC_clicked()
 {
+    lab1="";
     ui->label->setText("0");
     ui->label_2->clear();
     minus=mul=plus=div=false;
@@ -277,6 +406,7 @@ void Calculator::on_buttonscientific_clicked()
 
     if(sc==false)
     {
+
         this->setFixedSize(500,530);
         f.setStrikeOut(true);
         ui->buttonscientific->setGeometry(450,10,50,50);
@@ -305,14 +435,16 @@ void Calculator::on_buttonscientific_clicked()
         }
         createButton();
         sc=true;
+        connect(pbpi,SIGNAL(released()),this,SLOT(specialClicked()));
     }
     else
     {
+        disconnect(pbpi,SIGNAL(released()),this,SLOT(specialClicked()));
         this->setFixedSize(380,530);
         f.setStrikeOut(false);
         ui->buttonscientific->setGeometry(330,10,50,50);
         ui->buttonscientific->setFont(f);
-        delete pblog;
+        delete pblog2;
         delete pbsqrt;
         delete pbfact;
         delete pbinv;
@@ -324,6 +456,14 @@ void Calculator::on_buttonscientific_clicked()
         delete pb10;
         delete pbln;
         delete pbrand;
+        delete pbpow2;
+        delete pbpow3;
+        delete pbE;
+        delete pblog10;
+        delete pbsin1;
+        delete pbcos1;
+        delete pbtan1;
+        delete pbxy;
         {
             ui->buttondivide->setGeometry(310,195,50,50);
             ui->buttonmult->setGeometry(310,260,50,50);
@@ -366,4 +506,3 @@ void Calculator::on_buttonplus_minus_clicked()
     s*=-1;
     ui->label->setNum(s);
 }
-
