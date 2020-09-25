@@ -21,6 +21,8 @@ private slots:
 
     void digitClicked();
 
+    void specialClicked();
+
     void operatorClicked();
 
     void on_buttonAC_clicked();
@@ -38,6 +40,7 @@ private:
     bool div, mul, plus, minus, sc;
     double val1, val;
     QString lab1;
-    QPushButton *pblog, *pbsqrt, *pbfact, *pbinv, *pbpi, *pbsin, *pbcos, *pbtang, *pbexp, *pb10, *pbln, *pbrand;
+    QPushButton *pblog2, *pbsqrt, *pbfact, *pbinv, *pbpi, *pbsin, *pbcos, *pbtang, *pbexp, *pb10, *pbln, *pbrand, *pbpow2, *pbpow3, *pblog10, *pbE,
+    *pbsin1, *pbcos1, *pbtan1, *pbxy;
 };
 #endif // CALCULATOR_H
