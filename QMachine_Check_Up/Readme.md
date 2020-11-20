@@ -1,4 +1,4 @@
-#SQL #database #network
+# SQL | Database
 
 This project uses only phpMyAdmin (no sw is installed on my computer)
 
